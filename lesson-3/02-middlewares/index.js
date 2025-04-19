@@ -6,15 +6,19 @@ const PORT = 8080;
 
 const app = express();
 
-app.use((req, res, next) => {
-  const apiKey = req.query["api-key"];
-
-  console.log({ typeof: typeof apiKey });
-
+function checkAuth(req, res, next) {
   console.log("Middleware A");
 
+  const apiKey = req.query["api-key"];
+
+  if (apiKey !== "12345") {
+    return res.status(401).send("Please provide API Key");
+  }
+
+  console.log("Complete");
+
   next();
-});
+}
 
 app.use((req, res, next) => {
   console.log("Middleware B");
@@ -22,11 +26,17 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/movies", async (req, res) => {
+// app.use(checkAuth);
+
+app.get("/movies", checkAuth, async (req, res) => {
   const data = await fs.readFile(path.resolve("movies.txt"), {
     encoding: "utf-8",
   });
   res.send(data);
+});
+
+app.post("/movies", checkAuth, (req, res) => {
+  res.send("POST Movies");
 });
 
 app.listen(PORT, () => {
