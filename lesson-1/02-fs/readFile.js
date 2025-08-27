@@ -6,12 +6,12 @@
 // зчитування файлу, це асинхронний метод
 // приймає колбек функцію (помилка, дані), також робимо розкодування, бо видасть буфер
 // виконається 3, бо асинхронна функція readFile
-// fs.readFile("read.txt", { encoding: "utf-8" }, (err, data) => {
-//   if (err) {
-//     throw err;
-//   }
-//   console.log(data);
-// });
+fs.readFile("read.txt", { encoding: "utf-8" }, (err, data) => {
+  if (err) {
+    throw err;
+  }
+  console.log(data);
+});
 
 // console.log("End"); //виконається 2
 
@@ -23,11 +23,11 @@ const fs = require("node:fs/promises");
 console.log("Start"); //виконається 1
 
 // тут без колбеку, як на 9 рядку, бо promises
-// fs.readFile("read.txt", { encoding: "utf-8" })
-//   .then((data) => console.log(data))
-//   .catch((err) => {
-//     throw err;
-//   });
+fs.readFile("read.txt", { encoding: "utf-8" })
+  .then((data) => console.log(data))
+  .catch((err) => {
+    throw err;
+  });
 
 //   тепер доступні ось такі плюшки в промісах, зчитуємо 3 файли паралельно
 const p1 = fs.readFile("read.txt", { encoding: "utf-8" });
