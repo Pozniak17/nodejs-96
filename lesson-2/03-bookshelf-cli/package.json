@@ -9,5 +9,8 @@
   "keywords": [],
   "author": "Yevhenii Pozniak <jekamanu@gmail.com>",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "commander": "^14.0.0"
+  }
 }

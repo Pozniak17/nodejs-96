@@ -12,4 +12,4 @@ console.log(sum(3, 3));
 alert(sum(1, 2)); // Not work in Node.js
 localStorage.setItem("sum", sum(1, 2)); // Not work in Node.js
 
-// якщо спорбувати запустити цей код☝️, буде помилка у виконанні node.js api (browser api помилка в node.js api)
+// якщо спробувати запустити цей код☝️, буде помилка у виконанні node.js api (browser api помилка в node.js api)

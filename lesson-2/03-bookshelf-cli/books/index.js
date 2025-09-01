@@ -130,5 +130,4 @@ async function removeBook(id) {
 }
 
 // readBooks та writeBooks ми не експортуємо, бо це приватні функції, потрібні тільки тут (інкапсуляція)
-export { getBooks, getBook, createBook, updatedBook, removeBook };
-// продовжити 1:56:30
+export default { getBooks, getBook, createBook, updatedBook, removeBook };
