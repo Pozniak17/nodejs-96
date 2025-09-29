@@ -13,6 +13,7 @@ const PORT = 8080;
 const app = express();
 
 // глобальна мідлвара, (краще її парсити в не глобально) розпарсюємо наш JSON файл який ми передали, щоб побачити його в консолі
+// нам express.json() потрібен тільки на POST
 //! app.use(express.json()); //побачимо в консолі { title: 'Film 1', producer: 'Producer 1', year: 2000 }
 
 const jsonParser = express.json();

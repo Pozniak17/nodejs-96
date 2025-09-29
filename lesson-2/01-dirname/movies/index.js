@@ -9,9 +9,7 @@ async function readMovies() {
 
   console.log(`${__dirname}/movies.txt`); // абсолютний шлях, метод не зручний, використовують path.join(), він ще й нормалізує дужки
   console.log(filePath);
-  const data = await fs.readFile(filePath, {
-    encoding: "utf-8",
-  });
+  const data = await fs.readFile(filePath, { encoding: "utf-8" });
 
   return data;
 }

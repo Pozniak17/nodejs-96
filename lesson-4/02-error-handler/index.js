@@ -7,6 +7,7 @@ const app = express();
 
 // формуємо помилку сервера (коли в нас не вірний доступ books.txt не існує, а в нас movies.txt)
 app.get("/movies", async (req, res, next) => {
+  //   res.send("Movies"); //якщо роут знайшовся тут і буде вихід з функції, в next не піде'
   try {
     const data = await fs.readFile(path.resolve("movies.txt"), {
       encoding: "utf-8",

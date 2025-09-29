@@ -19,7 +19,7 @@ function checkAuth(req, res, next) {
 }
 
 // use для middleware в express
-//! app.use(checkAuth); - глобальна middleware, перевірка пл всьому документу
+//! app.use(checkAuth); - глобальна middleware, перевірка по всьому документі
 
 // next() вказує йди далі вниз по коду
 app.use((req, res, next) => {

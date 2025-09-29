@@ -6,7 +6,7 @@ const PORT = 8080;
 const app = express();
 
 // 3.робимо куди буде робитись запит, (запит відповідь)
-//get запит на http://localhost:8080/movies
+//get запит на http://localhost:8080/
 app.get("/", (req, res) => {
   res.send("Hello, Express!"); //завершуємо відповідь
 });

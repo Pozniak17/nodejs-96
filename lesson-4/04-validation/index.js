@@ -30,7 +30,7 @@ app.post("/movies", jsonParser, (req, res) => {
     year: req.body.year,
   };
 
-  // виконуємо валідацію, convert: false (щоб не було конвертації)
+  // проганяємо через нашу схему об'єкт movie. convert: false це щоб не конвертувалося з рядка в число
   const { error, value } = movieSchema.validate(movie, { convert: false });
   if (typeof error !== "undefined") {
     return res.status(400).send("Validation Error");
