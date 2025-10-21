@@ -1,3 +1,4 @@
+// тут ми підключаємо нашу БД з Атласу
 import mongoose from "mongoose";
 
 // в atlas дивимося в connect (тут замінюємо пароль)

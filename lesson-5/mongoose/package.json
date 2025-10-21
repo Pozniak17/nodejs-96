@@ -1,5 +1,5 @@
 {
-  "name": "01-mongoose",
+  "name": "mongoose",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
@@ -9,9 +9,8 @@
   "keywords": [],
   "author": "Yevhenii Pozniak <jekamanu@gmail.com>",
   "license": "ISC",
+  "description": "",
   "dependencies": {
-    "mongoose": "^8.19.1"
-  },
-  "devDependencies": {},
-  "description": ""
+    "mongoose": "^8.19.2"
+  }
 }
