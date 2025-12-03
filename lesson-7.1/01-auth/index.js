@@ -1,10 +1,9 @@
-// не потрібен, видалили, бо зчитуємо з env в render.com які додали
-// import "dotenv/config";
+// нам не треба, якщо додали змінні оточення на render.com
+import "dotenv/config";
 
 import express from "express";
-import routes from "./routes/index.js";
-
 import "./db.js";
+import routes from "./routes/index.js";
 
 const PORT = process.env.PORT || 8080;
 
@@ -14,7 +13,7 @@ app.use("/api", routes);
 
 // Handle 404 Error
 app.use((req, res, next) => {
-  res.status(404).send("Not found");
+  res.status(404).send("Not Found");
 });
 
 // Handle 500 Error

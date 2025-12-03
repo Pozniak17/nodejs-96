@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import User from "../models/user.js";
 
 async function register(req, res, next) {
@@ -39,7 +41,6 @@ async function login(req, res, next) {
 
   try {
     // здійснюємо пошук чи є такий користувач
-    // ! порівнюємо email
     const user = await User.findOne({ email: emailInLowerCase });
     // якщо користувача немає
     if (user === null) {
@@ -50,7 +51,6 @@ async function login(req, res, next) {
     }
 
     // якщо знайдено по email, приймає 2 значення (пароль, захешована версія паролю) знаходиться в user.password
-    //! порівнюємо password з хешом який в БД
     const isMatch = await bcrypt.compare(password, user.password);
 
     // ще одна перевірка на пароль
@@ -62,7 +62,14 @@ async function login(req, res, next) {
     }
 
     // якщо все успішно і емейл вірний введено і пароль пройшов перевірку, то повертаємо token з інформацією про користувача
-    res.send({ token: "TOKEN" });
+    //! приймає 3 аргументи: payload(дані), приймає JWT secret key, options(скільки часу житиме наш ТОКЕН)
+    const token = jwt.sign(
+      { id: user._id, name: user.name },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.send({ token });
   } catch (error) {
     next(error);
   }
