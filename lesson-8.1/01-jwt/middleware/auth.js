@@ -1,29 +1,27 @@
-import jwt from "jsonwebtoken";
+//! middleware яка буде показувати дані тільки якщо токен валідний
 
-async function auth(req, res, next) {
-  const authorizationHeaders = req.headers.authorization;
+import jwt, { decode } from "jsonwebtoken";
 
-  console.log(authorizationHeaders); //Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmRiOTQ3NjA5YzkwMDViMzk0NzRhMyIsIm5hbWUiOiJNYXJpYSIsImlhdCI6MTc2NDc2OTM5NCwiZXhwIjoxNzY0NzcyOTk0fQ.EWb2sHdnH1ryJxQaSt4YresZKYzn4dUtAY8eytid9l8
+function auth(req, res, next) {
+  const authorizationHeader = req.headers.authorization;
 
-  //! перевірка 1, якщо не переданий токен або протух
-  //   також впевнюємося що тут є string
-  if (typeof authorizationHeaders === "undefined") {
+  //* перевірки токену
+  //! 1.чи є взагалі в нас токен, може бути або string або undefined
+  if (typeof authorizationHeader === "undefined") {
     return res.status(401).send({ message: "Invalid token" });
   }
 
-  //! перевірка 2, на те чи в рядку є слово Bearer, розділяємо по пробілу і вказуємо що повинно бути 2 елементи
-  // елемент 1 в bearer,елемент 2 в token
-  const [bearer, token] = authorizationHeaders.split(" ", 2);
+  //! 2. якщо string, то має містити "Bearer" і токен
+  // розділяємо по пробілу і вказуємо що має бути лише 2 елементи, робимо деструктуризацію
+  const [bearer, token] = authorizationHeader.split(" ", 2);
 
-  console.log({ bearer, token });
-
-  //! перевірка 3 чи там в тексті не абракадабра
+  // перевірка на "Bearer"
   if (bearer !== "Bearer") {
     return res.status(401).send({ message: "Invalid token" });
   }
 
-  //! перевірка 4 через JWT чи валідний токен, чи це саме той токен, який був випущений нашою системою
-  // передаються token, secret і колбек (err, decode)
+  // перевірка токену самого(чи це токен випущений нашою системою), приймає token, secret з .env, та колбек(err, decode)
+  // якщо вставити інший токен, то видасть помилку
   jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
     if (err) {
       return res.status(401).send({ message: "Invalid token" });
@@ -31,7 +29,8 @@ async function auth(req, res, next) {
 
     console.log({ decode });
 
-    //! це мутування об'єкта user, для того аби персоналізувати відповідь, користувач1 отримує своє, користувач2 інше своє
+    //! нам треба розділяти користувачів і їх запити, тому полю req додаємо поле user, це для персоналізованих відповідей на запити користувачів
+    // в controllers в getBooks в req є тепер поле user
     req.user = {
       id: decode.id,
       name: decode.name,
@@ -43,10 +42,21 @@ async function auth(req, res, next) {
 
 export default auth;
 
-//todo в decode наш payload
-//  decode: {
+//todo req.headers витягує ось такий об'єкт, де зберігається наш токен
+// {
+//*   authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmRiOTQ3NjA5YzkwMDViMzk0NzRhMyIsIm5hbWUiOiJNYXJpYSIsImlhdCI6MTc2NTIwMTQ5MywiZXhwIjoxNzY1MjA1MDkzfQ.3_wdQTb1T8q01UIZ-Hsh7322eYqS5n3RgmdJgEuT2Oc',
+//   'user-agent': 'PostmanRuntime/7.49.1',
+//   accept: '*/*',
+//   'postman-token': '92683480-2da0-48c2-97f9-60796285df0d',
+//   host: 'localhost:8080',
+//   'accept-encoding': 'gzip, deflate, br',
+//   connection: 'keep-alive'
+// }
+
+//todo decode - це наш payload і в ньому об'єкт
+//   decode: {
 //     id: '692db947609c9005b39474a3',
 //     name: 'Maria',
-//     iat: 1764775989,
-//     exp: 1764783189
+//     iat: 1765205557,
+//     exp: 1765209157
 //   }

@@ -1,7 +1,9 @@
 import Book from "../models/book.js";
 
 async function getBooks(req, res, next) {
-  console.log({ user: req.user });
+  //* це з middleware те що ми додали req.user = {id: decode.id, name: decode.name};
+  console.log({ user: req.user }); //{ id: '692db947609c9005b39474a3', name: 'Maria' }
+
   try {
     const books = await Book.find();
 
