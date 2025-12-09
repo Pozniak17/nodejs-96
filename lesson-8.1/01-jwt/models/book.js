@@ -31,6 +31,11 @@ const bookSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    // задаємо книжці id користувача, не може бути книжки в якої немає користувача
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true }
 );

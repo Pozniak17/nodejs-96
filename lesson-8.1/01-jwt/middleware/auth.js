@@ -1,6 +1,8 @@
 //! middleware яка буде показувати дані тільки якщо токен валідний
 
-import jwt, { decode } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+
+import User from "../models/user.js";
 
 function auth(req, res, next) {
   const authorizationHeader = req.headers.authorization;
@@ -22,21 +24,37 @@ function auth(req, res, next) {
 
   // перевірка токену самого(чи це токен випущений нашою системою), приймає token, secret з .env, та колбек(err, decode)
   // якщо вставити інший токен, то видасть помилку
-  jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decode) => {
     if (err) {
       return res.status(401).send({ message: "Invalid token" });
     }
 
-    console.log({ decode });
+    try {
+      const user = await User.findById(decode.id);
+      // перевірки якщо токен протух або після logout = null
+      // якщо користувача немає
+      if (user === null) {
+        return res.status(401).send({ message: "Invalid token" });
+      }
 
-    //! нам треба розділяти користувачів і їх запити, тому полю req додаємо поле user, це для персоналізованих відповідей на запити користувачів
-    // в controllers в getBooks в req є тепер поле user
-    req.user = {
-      id: decode.id,
-      name: decode.name,
-    };
+      // якщо токен не валідний
+      if (user.token !== token) {
+        return res.status(401).send({ message: "Invalid token" });
+      }
 
-    next();
+      console.log({ decode });
+
+      //! нам треба розділяти користувачів і їх запити, тому полю req додаємо поле user, це для персоналізованих відповідей на запити користувачів
+      // в controllers в getBooks в req є тепер поле user
+      req.user = {
+        id: user._id,
+        name: user.name,
+      };
+
+      next();
+    } catch (error) {
+      next(error);
+    }
   });
 }
 
@@ -53,7 +71,7 @@ export default auth;
 //   connection: 'keep-alive'
 // }
 
-//todo decode - це наш payload і в ньому об'єкт
+//todo decode - це наш payload і в ньому об'єкт, з токену дані
 //   decode: {
 //     id: '692db947609c9005b39474a3',
 //     name: 'Maria',

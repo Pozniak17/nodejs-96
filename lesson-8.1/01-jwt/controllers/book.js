@@ -5,7 +5,7 @@ async function getBooks(req, res, next) {
   console.log({ user: req.user }); //{ id: '692db947609c9005b39474a3', name: 'Maria' }
 
   try {
-    const books = await Book.find();
+    const books = await Book.find({ ownerId: req.user.id }); //передаємо всередину фільтр, для показу лише книжок користувача
 
     res.send(books);
   } catch (error) {
@@ -16,12 +16,30 @@ async function getBooks(req, res, next) {
 async function getBook(req, res, next) {
   const { id } = req.params;
   try {
-    const book = await Book.findById(id);
+    //! варіант 1
+    // const book = await Book.findById(id);
 
     // якщо не знайдено по id
+    // if (book === null) {
+    //   return res.status(404).send({ message: "Book not found" });
+    // }
+
+    // додаткова перевірка, щоб не можна було витягувати книги по id, які не належать ownerId
+    // toString для конвертування ew ObjectId('692db947609c9005b39474a3') в 692db947609c9005b39474a3
+    //todo 403 це "така книга є, але немає доступу" не використовують, тому повертають 404
+    // if (book.ownerId.toString() !== req.user.id) {
+    // return res.status(403).send({ message: "Book is forbidden" }); // не використовуємо
+    // return res.status(404).send({ message: "Book not found" }); // використовуємо
+    // }
+    //!
+
+    //! варіант 2 (так само робиться update та delete)
+    const book = await Book.findOne({ _id: id, ownerId: req.user.id });
+
     if (book === null) {
-      return res.status(404).send("Book not found");
+      return res.status(404).send({ message: "Book not found" });
     }
+    //!
 
     res.send(book);
   } catch (error) {
@@ -38,6 +56,7 @@ async function createBook(req, res, next) {
     genre: req.body.genre,
     year: req.body.year,
     pages: req.body.pages,
+    ownerId: req.user.id, //додаємо поле id до книжки при створенні, в body не передаємо, додається автоматично з user req.user = {id: decode.id, name: decode.name}; з токену
   };
 
   try {

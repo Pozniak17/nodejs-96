@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // зберігаємо токен користувача для logout
+    token: {
+      type: String,
+      default: null, //токен записується тільки після login, а за замовчуванням null
+    },
   },
   { versionKey: false, timestamps: true }
 );

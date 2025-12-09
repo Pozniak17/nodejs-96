@@ -72,6 +72,9 @@ async function login(req, res, next) {
       { expiresIn: "1h" }
     );
 
+    // записуємо в поле користувача токен при логіні
+    await User.findByIdAndUpdate(user._id, { token });
+
     // якщо все успішно і емейл вірний введено і пароль пройшов перевірку, то повертаємо token з інформацією про користувача
     res.send({ token });
   } catch (error) {
@@ -79,7 +82,18 @@ async function login(req, res, next) {
   }
 }
 
+async function logout(req, res, next) {
+  try {
+    await User.findByIdAndUpdate(req.user.id, { token: null }); //при logout ставимо токен в null
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+  res.send("Logout");
+}
+
 export default {
   register,
   login,
+  logout,
 };
