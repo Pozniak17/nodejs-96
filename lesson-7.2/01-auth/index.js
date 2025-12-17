@@ -1,11 +1,12 @@
-import "dotenv/config";
+// можна не вик. якщо додати змінні оточення в render.com
+//! import "dotenv/config";
 import express from "express";
 import routes from "./routes/index.js";
 
 import "./db.js";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8080;
 
 app.use("/api", routes);
 
@@ -21,5 +22,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server started on PORT 8080`);
+  console.log(`Server started on PORT ${PORT}`);
 });
