@@ -29,6 +29,41 @@ async function register(req, res, next) {
   }
 }
 
+//todo Заняття 7.2
+async function login(req, res, next) {
+  const { email, password } = req.body;
+
+  const emailInLowerCase = email.toLowerCase();
+  try {
+    const user = await User.findOne({ email: emailInLowerCase });
+
+    // перевірка на емейл в системі
+    if (user === null) {
+      console.log("Email");
+      return res
+        .status(401)
+        .send({ message: "Email or password is incorrect" });
+    }
+
+    // якщо користувач є в системі, треба порівняти паролі
+    // порівнює пароль та хеш-пароль(наш який в системі)
+    const isMatch = await bcrypt.compare(password, user.password);
+    // якщо пароль не пройшов
+    if (isMatch === false) {
+      console.log("Password");
+      return res
+        .status(401)
+        .send({ message: "Email or password is incorrect" });
+    }
+
+    // якщо все ОК, емейл знайшло в системі, пароль зійшовся, повертаємо токен
+    res.send({ token: "Token" });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export default {
   register,
+  login,
 };
