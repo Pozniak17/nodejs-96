@@ -1,6 +1,6 @@
 import express from "express";
 import AuthController from "../controllers/auth.js";
-
+//todo Заняття 8.2
 import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();

@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     token: {
-      type: String, //коли кор-ч тільки зареєструвався - ще немає токену
+      type: String,
       default: null,
     },
   },

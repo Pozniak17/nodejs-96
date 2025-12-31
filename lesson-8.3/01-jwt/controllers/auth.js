@@ -57,18 +57,18 @@ async function login(req, res, next) {
         .send({ message: "Email or password is incorrect" });
     }
 
-    //todo Заняття 8.1
-    // створюємо токен jwt.sign(payload, secret, час дії), який будемо передавати при успішному логіні
+    // генеруємо токен, передаємо payload, secret-key, expiresIn
     const token = jwt.sign(
       { id: user._id, name: user.name },
       process.env.JWT_SECRET,
       { expiresIn: "2h" }
     );
 
-    //todo Заняття 8.2
-    // користувач залогінився і ми записуємо користувачеві його токен
+    //todo заняття 8.2
+    // записуємо токен при логіні
     await User.findByIdAndUpdate(user._id, { token });
 
+    console.log(user);
     // якщо все ОК, емейл знайшло в системі, пароль зійшовся, повертаємо токен
     res.send({ token });
   } catch (error) {
@@ -76,13 +76,12 @@ async function login(req, res, next) {
   }
 }
 
-//todo Заняття 8.2
 async function logout(req, res, next) {
   try {
-    // дивитися 69 рядок
-    // коли кор-ч розлогіниться, токен повертати в null
+    // при логауті записуємо token: null
     await User.findByIdAndUpdate(req.user.id, { token: null });
     res.status(204).end();
+    res.send("Logout");
   } catch (error) {
     next(error);
   }

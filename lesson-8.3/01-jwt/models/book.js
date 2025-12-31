@@ -31,7 +31,8 @@ const bookSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    // це для того щоб вказати персоналізованого власника, книжка з id користувача
+    // тут ми вказуємо що в нашої книєки буде ід користувача, а в нас це _id: new ObjectId('692db90f609c9005b394749f'),
+    // не може бути книжки, в якої немає користувача
     ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

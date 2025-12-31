@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+import User from "../models/user.js";
+
 // мідлвара контролер (перевірятиме токен і дозволятиме побачити приватні дані)
 function auth(req, res, next) {
   //   витягуємо токен
@@ -21,20 +23,42 @@ function auth(req, res, next) {
   }
 
   // перевіряємо токен, (token, secret.key, callback(помилка, декодоване значення нашого токену))
-  jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decode) => {
     // якщо помилка (наприклад токен не наший)
     if (err) {
       return res.status(401).send({ message: "Invalid token" });
     }
 
-    //мутуємо створюємо на req => user з даними (для для того, щоб виводити персоналізовані дані користувача)
-    req.user = {
-      id: decode.id,
-      name: decode.name,
-    };
-    // якщо помилки немає
-    console.log({ decode });
-    next();
+    //todo Заняття 8.2
+    // тут перевірка, щоб при логауті викидувало користувача (не можна було робити запити)
+    try {
+      const user = await User.findById(decode.id);
+
+      if (user === null) {
+        return res.status(401).send({ message: "Invalid token" });
+      }
+
+      if (user.token !== token) {
+        return res.status(401).send({ message: "Invalid token" });
+      }
+
+      console.log({ decode });
+
+      //мутуємо створюємо на req => user з даними (для для того, щоб виводити персоналізовані дані користувача)
+      // req.user = {
+      //   id: decode.id,
+      //   name: decode.name,
+      // };
+
+      req.user = {
+        id: user._id,
+        name: user.name,
+      };
+
+      next();
+    } catch (error) {
+      next(error);
+    }
   });
 }
 

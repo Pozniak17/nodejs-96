@@ -1,14 +1,15 @@
 import Book from "../models/book.js";
 
 async function getBooks(req, res, next) {
-  // todo Заняття 8.1
-  // це користувач який робить запит (для кастомізованої відповіді)
-  console.log({ user: req.user }); // user: { id: '692db947609c9005b39474a3', name: 'Maria' }
-  // todo Заняття 8.1
+  // який користувач робить запит
+  // todo це докодоване значення
+  console.log({ user: req.user }); //{ id: '692db90f609c9005b394749f', name: 'Michael' }
+  console.log(req);
+
   try {
-    //todo нове 8.2 поверни книги в яких ownerId = req.user.id, персоналізовані
-    const books = await Book.find({ ownerId: req.user.id });
-    //todo нове 8.2
+    // req.user.id = це значення з decode
+    const books = await Book.find({ ownerId: req.user.id }); //персоналізуємо відповідь за фільтром
+
     res.send(books);
   } catch (error) {
     next(error);
@@ -18,25 +19,32 @@ async function getBooks(req, res, next) {
 async function getBook(req, res, next) {
   const { id } = req.params;
   try {
+    // todo варіант 1
     // const book = await Book.findById(id);
 
-    // якщо не знайдено по id
+    // // якщо не знайдено по id
     // if (book === null) {
     //   return res.status(404).send({ message: "Book not found" });
     // }
 
-    //todo нове 8.2 перевірка щоб не робити запити на чужі книжки
-    // щоб витягнути ownerId: new ObjectId('692db947609c9005b39474a3'), число використовуємо book.ownerId.toString()
-    // if (book.ownerId.toString() !== req.user.id) {
-    //   return res.status(404).send({ message: "Book not found" });
+    // //* нове
+    // console.log(book.ownerId, req.user.id); //new ObjectId('692db947609c9005b39474a3') 692db947609c9005b39474a3
+    //! щоб взяти число без тексту вик. toString()
+    //! це щоб по чужому ід не можна було б взяти книжку
+    // if (book.ownerId.toString !== req.user.id) {
+    //   // return res.status(403).send({ message: "Book is forbidden" });
+    //   return res.status(404).send({ message: "Book not found" }); // робить так
     // }
 
-    // варіант 2
+    //todo варіант 1
+
+    //todo варіант 2
     const book = await Book.findOne({ _id: id, ownerId: req.user.id });
+
     if (book === null) {
       return res.status(404).send({ message: "Book not found" });
     }
-    //todo нове 8.2
+    //todo варіант 2
     res.send(book);
   } catch (error) {
     next(error);
@@ -52,11 +60,7 @@ async function createBook(req, res, next) {
     genre: req.body.genre,
     year: req.body.year,
     pages: req.body.pages,
-    // нове
-    //todo нове 8.2 при ств. книжки, буде братися з req.user.id (в постман не передаємо)
-    // req.user який ми створили в auth.js middleware
-    ownerId: req.user.id, //* middleware auth.js та models book.js
-    //todo нове 8.2
+    ownerId: req.user.id, //нове поле, яке ми витягуємо з req.user.id, це ті що decode
   };
 
   try {
@@ -120,4 +124,26 @@ export default {
 
 //todo findByIdAndDelete це видалення по id
 //todo findOneAndDelete це видалення по фільтру Book.findOneAndDelete({author: "Author 1"})
-//todo insertMany це додавання декількох документів за 1 запит
+
+// todo
+// при create - post запиті передаємо, ownedId - передавати не треба, він береться з декодованих значень req.user
+// {
+//     "title": "New JS",
+//     "author": "Gleck Glock",
+//     "genre": "Action",
+//     "year": 2020,
+//     "pages": 100
+// }
+
+//todo отримуємо
+// {
+//     "title": "New JS",
+//     "author": "Gleck Glock",
+//     "genre": "Action",
+//     "year": 2020,
+//     "pages": 100,
+//     "ownerId": "692db90f609c9005b394749f", // додалося поле з декодованого значення
+//     "_id": "69551bb4659f8beb65c2da05", // id книжки (створює MongoDB)
+//     "createdAt": "2025-12-31T12:48:52.262Z",
+//     "updatedAt": "2025-12-31T12:48:52.262Z"
+// }
