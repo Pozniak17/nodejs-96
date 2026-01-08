@@ -1,0 +1,10 @@
+#! ігноруй все що в цій папці
+tmp/*
+
+#! не ігноруй .getkeep - це для створення папки tmp в репозиторіх Гітхаб
+!tmp/.gitkeep
+
+public/avatars*
+
+#! ми хочемо щоб папка public/avatars була в нашому репозиторію
+!public/avatars/.gitkeep

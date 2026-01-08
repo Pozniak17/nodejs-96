@@ -7,11 +7,14 @@ import uploadMiddlare from "../middleware/upload.js";
 const router = express.Router();
 
 // патч бо будемо додавати 1 поле (картинку), single це завантаження 1 файлу
-// в дужках вказуємо "avatar" це поле також буде в postman ключем Key
+// в дужках вказуємо "avatar" це поле також буде в postman ключем Key, це для запису
 router.patch(
   "/avatar",
   uploadMiddlare.single("avatar"),
   UserController.uploadAvatar
 );
+
+// роутер щоб взяти аватарку користувача
+router.get("/avatar", UserController.getAvatar);
 
 export default router;

@@ -1,5 +1,6 @@
 // можна не вик. якщо додати змінні оточення в render.com
 //! import "dotenv/config";
+import path from "node:path";
 import express from "express";
 import routes from "./routes/index.js";
 
@@ -7,6 +8,10 @@ import "./db.js";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// налаштовуємо маршрут для отримання картинок (статичні файли)
+// можна додатково передати мідлвару authMiddleware, якщо треба щоб залогінені бачили
+app.use("/avatars", express.static(path.resolve("public/avatars")));
 
 app.use("/api", routes);
 
